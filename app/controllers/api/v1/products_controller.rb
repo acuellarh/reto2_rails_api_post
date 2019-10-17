@@ -15,17 +15,25 @@ class Api::V1::ProductsController < ApplicationController
     if @product.save
       render json: @product, status: :created
     else
-      render json: { errors: @product.errors }, status: :unprocessable_entity
+      render json: { errors: @product.errors }, status: 422
     end
   end
 
-  def edit
-    @product = Product.find(params[:id])    
+  def update
+    @product = Product.find(params[:id]) 
+    if @product.update(product_params)
+      render json: @product, status: 200
+    else
+      render json: {errors: @product.errors}, status: 422
+    end    
   end
 
-  def update
-    @product = Product.update(params[:id], product_params)    
-  end
+  def destroy
+    @product = Product.find(params[:id])
+    @product.destroy
+
+    head :no_content
+  end  
 
   private
   def product_params
